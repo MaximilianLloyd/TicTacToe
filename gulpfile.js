@@ -4,12 +4,14 @@ const gulp         = require('gulp'),
       autoprefixer = require('gulp-autoprefixer'),
       uglify       = require('gulp-uglify'),
       browserSync  = require('browser-sync').create(),
-      browserify   = require('gulp-browserify');
+      browserify   = require('gulp-browserify'),
+      concatCss = require('gulp-concat-css');
 
 gulp.task('minify:css', function() {
   return gulp.src('styles/*.css')
     .pipe(cleanCSS())
     .pipe(autoprefixer())
+    .pipe(concatCss('style.css'))
     .pipe(gulp.dest('dist/styles'))
     .pipe(browserSync.stream());
 });

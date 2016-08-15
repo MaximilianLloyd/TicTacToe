@@ -17,6 +17,7 @@
     "gulp-babel": "^6.1.2",
     "gulp-browserify": "^0.5.1",
     "gulp-clean-css": "^2.0.12",
+    "gulp-concat-css": "^2.3.0",
     "gulp-uglify": "^2.0.0"
   }
 }

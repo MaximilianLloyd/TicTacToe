@@ -1,11 +1,13 @@
+const Ai = require('./ai');
+
 class Board {
   constructor(x, o) {
-    console.log('Initializing board');
     this.moveCount    = 0;
     this.playing      = true;
     this.won          = false;
     this.boardElement = document.querySelector('.board');
     this.wonElement   = document.querySelector('.won');
+    this.ai           = new Ai();
     this.players      = {};
     this.players.x    = x;
     this.players.o    = o;
@@ -19,12 +21,40 @@ class Board {
                         []];
 
     this.fit();
-    document.querySelectorAll('.cell').forEach((gridElement, index) => {
+    let gridElements = document.querySelectorAll('.cell');
+
+    for (let index = 0; index < gridElements.length; index++) {
+      let gridElement = gridElements[index];
+
       if(index < 3) this.gridElements[0].push(gridElement);
       if(index < 6 && index > 2) this.gridElements[1].push(gridElement);
       if(index < 9 && index > 5) this.gridElements[2].push(gridElement);
       gridElement.innerHTML = '_';
       gridElement.addEventListener('click', event => this.movePlayer(event));
+    }
+
+
+    let buttonModePlayer = document.querySelector('.mode-player');
+    let buttonModeMachine = document.querySelector('.mode-machine');
+    let buttonModeContainer = document.querySelector('.mode');
+
+    let showBoard = () => {
+      buttonModeContainer.classList.add('fadeOut');
+      setTimeout(() => {
+        buttonModeContainer.style.display = 'none';
+        this.boardElement.style.display = 'block';
+        this.boardElement.classList.add('fadeIn');
+      }, 200);
+    };
+
+    buttonModePlayer.addEventListener('click', () => {
+      this.mode = 'player';
+      showBoard();
+    });
+
+    buttonModeMachine.addEventListener('click', () => {
+      this.mode = 'machine';
+      showBoard();
     });
 }
 
@@ -39,6 +69,18 @@ class Board {
           this.moveCount++;
           this.hasWon();
           this.turn = this.turn.type === this.players.x.type ? this.players.o : this.players.x;
+          let audio = new Audio('/sounds/select.wav');
+          audio.play();
+
+          if(this.mode === 'machine') {
+           let coordinates =  this.ai.predict(this.grid, this.turn, this.turn.type === 'x' ? 'o' : 'x');
+           console.log(coordinates);
+           this.grid[coordinates.row][coordinates.column] = this.turn.type;
+           this.gridElements[coordinates.row][coordinates.column].textContent  = this.turn.type;
+           this.hasWon();
+           this.turn = this.turn.type === this.players.x.type ? this.players.o : this.players.x;
+           this.moveCount++;
+          }
         }
       }
   }
@@ -46,7 +88,7 @@ class Board {
   hasWon() {
     // Check row
     let player = this.turn.type;
-    for (let row = 0; row < this.grid.length; row++) {
+    for (let row = 0; row < 3; row++) {
       let cell;
       for (cell = 0; cell < this.grid[row].length; cell++) {
         if(this.grid[row][cell] != player) {
@@ -131,12 +173,17 @@ class Board {
                         ['', '', '']];
     this.turn = this.players.x;
 
-    document.querySelectorAll('.cell').forEach((gridElement, index) => {
+    let gridElements = document.querySelectorAll('.cell');
+
+    for (let index = 0; index < gridElements.length; index++) {
+      let gridElement = gridElements[index];
+
       if(index < 3) this.gridElements[0].push(gridElement);
       if(index < 6 && index > 2) this.gridElements[1].push(gridElement);
       if(index < 9 && index > 5) this.gridElements[2].push(gridElement);
       gridElement.innerHTML = '_';
-    });
+      gridElement.addEventListener('click', event => this.movePlayer(event));
+    }
 
 
     setTimeout(() => {

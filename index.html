@@ -12,6 +12,13 @@
   </head>
   <body class="animated fadeIn">
     <div class="title">Tic Tac Toe</div>
+    <div class="mode animated">
+      <div class="mode--title">Choose a mode</div>
+      <div class="button mode-player">Player VS Player</div>
+      <br>
+      <div class="button mode-machine">Machine</div>
+      <div class="credit">Made by <a class="credit--link" href="http://maxlloyd.no">Max</a></div>
+    </div>
     <div class="board animated">
         <div class="row"><div class="cell" data-row="0" data-column="0"></div><div class="cell" data-row="0" data-column="1"></div><div class="cell" data-row="0" data-column="2"></div></div>
         <div class="row"><div class="cell" data-row="1" data-column="0"></div><div class="cell" data-row="1" data-column="1"></div><div class="cell" data-row="1" data-column="2"></div></div>
@@ -19,9 +26,9 @@
     </div>
     <div class="won animated">
       <div class="won--message"></div>
-      <div class="won--restart">restart</div>
+      <div class="button won--restart">restart</div>
     </div>
-    <script src="sw.js"></script>
+     <script src="sw.js"></script>
     <script src="dist/scripts/bundle.js"></script>
   </body>
 </html>
