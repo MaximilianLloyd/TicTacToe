@@ -12,12 +12,18 @@
   </head>
   <body class="animated fadeIn">
     <div class="title">Tic Tac Toe</div>
-    <div class="mode animated">
-      <div class="mode--title">Choose a mode</div>
+    <div class="form mode animated">
+      <div class="form--title">Choose a mode</div>
       <div class="button mode-player">Player VS Player</div>
       <br>
       <div class="button mode-machine">Machine</div>
       <div class="credit">Made by <a class="credit--link" href="http://maxlloyd.no">Max</a></div>
+    </div>
+    <div class="form first-select animated">
+      <div class="form--title">Who goes first?</div>
+      <div class="button player-first">Player</div>
+      <br>
+      <div class="button machine-first">Machine</div>
     </div>
     <div class="board animated">
         <div class="row"><div class="cell" data-row="0" data-column="0"></div><div class="cell" data-row="0" data-column="1"></div><div class="cell" data-row="0" data-column="2"></div></div>
@@ -28,7 +34,7 @@
       <div class="won--message"></div>
       <div class="button won--restart">restart</div>
     </div>
-     <script src="sw.js"></script>
+    <!-- <script src="sw.js"></script> -->
     <script src="dist/scripts/bundle.js"></script>
   </body>
 </html>

@@ -71,7 +71,7 @@ body {
   font-size: 84px;
   font-weight: 200;
   cursor: pointer;
-
+  opacity: 1;
 }
 
 .board .row:nth-child(1) .cell:nth-child(1) {
@@ -133,18 +133,18 @@ body {
 }
 
 
-.mode {
+.form {
   text-align: center;
   margin-top: 35vh;
   transition: all 200ms ease-in-out;
 }
 
-.mode .mode--title {
+.form .form--title {
   font-size: 28px;
   margin-bottom: 20px;
 }
 
-.mode .button {
+.form .button {
   margin: 10px 0px;
 }
 
@@ -161,6 +161,15 @@ body {
     font-weight: 700;
     text-decoration: none;
   }
+
+
+.first-select {
+  display: none;
+}
+
+@keyframes blinker {
+  50% { opacity: 0.5; }
+}
 
 
 @media(max-width: 660px) {

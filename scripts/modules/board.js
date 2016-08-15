@@ -1,4 +1,5 @@
-const Ai = require('./ai');
+const Ai = require('./ai'),
+      autoBind = require('auto-bind');
 
 class Board {
   constructor(x, o) {
@@ -36,14 +37,20 @@ class Board {
 
     let buttonModePlayer = document.querySelector('.mode-player');
     let buttonModeMachine = document.querySelector('.mode-machine');
-    let buttonModeContainer = document.querySelector('.mode');
+    this.buttonModeContainer = document.querySelector('.mode');
 
-    let showBoard = () => {
-      buttonModeContainer.classList.add('fadeOut');
+    let playerFirst         = document.querySelector('.player-first');
+    let machineFirst        = document.querySelector('.machine-first');
+    let firstContainer      = document.querySelector('.first-select');
+
+    let showBoard = (cb) => {
+      this.buttonModeContainer.classList.add('fadeOut');
       setTimeout(() => {
-        buttonModeContainer.style.display = 'none';
+        this.buttonModeContainer.style.display = 'none';
+        this.buttonModeContainer.classList.remove('fadeOut');
         this.boardElement.style.display = 'block';
         this.boardElement.classList.add('fadeIn');
+        if(cb) cb();
       }, 200);
     };
 
@@ -54,9 +61,44 @@ class Board {
 
     buttonModeMachine.addEventListener('click', () => {
       this.mode = 'machine';
-      showBoard();
+      this.buttonModeContainer.classList.add('fadeOut');
+      setTimeout(() => {
+        this.buttonModeContainer.style.display = 'none';
+        this.buttonModeContainer.classList.remove('fadeOut');
+        firstContainer.style.display = 'block';
+        firstContainer.classList.add('fadeIn');
+      }, 200);
     });
+
+    playerFirst.addEventListener('click', () => {
+      firstContainer.classList.add('fadeOut');
+      setTimeout(() => {
+        firstContainer.style.display = 'none';
+        firstContainer.classList.remove('fadeOut');
+        showBoard();
+      }, 200);
+    });
+
+    machineFirst.addEventListener('click', () => {
+      firstContainer.classList.add('fadeOut');
+      setTimeout(() => {
+        firstContainer.style.display = 'none';
+        firstContainer.classList.remove('fadeOut');
+        showBoard(this.moveMachine);
+      }, 200);
+    });
+
+  autoBind(this);
 }
+
+  moveMachine() {
+    let coordinates =  this.ai.predict(this.grid, this.turn, this.turn.type === 'x' ? 'o' : 'x');
+    this.grid[coordinates.row][coordinates.column] = this.turn.type;
+    this.gridElements[coordinates.row][coordinates.column].textContent  = this.turn.type;
+    this.hasWon();
+    this.turn = this.turn.type === this.players.x.type ? this.players.o : this.players.x;
+    this.moveCount++;
+  }
 
   movePlayer(event) {
     if(this.playing && !this.won) {
@@ -73,13 +115,7 @@ class Board {
           audio.play();
 
           if(this.mode === 'machine') {
-           let coordinates =  this.ai.predict(this.grid, this.turn, this.turn.type === 'x' ? 'o' : 'x');
-           console.log(coordinates);
-           this.grid[coordinates.row][coordinates.column] = this.turn.type;
-           this.gridElements[coordinates.row][coordinates.column].textContent  = this.turn.type;
-           this.hasWon();
-           this.turn = this.turn.type === this.players.x.type ? this.players.o : this.players.x;
-           this.moveCount++;
+            this.moveMachine();
           }
         }
       }
@@ -88,28 +124,36 @@ class Board {
   hasWon() {
     // Check row
     let player = this.turn.type;
+    let wonCells = [];
+    let cellCache = [];
     for (let row = 0; row < 3; row++) {
-      let cell;
-      for (cell = 0; cell < this.grid[row].length; cell++) {
-        if(this.grid[row][cell] != player) {
+      let column;
+      for (column = 0; column < this.grid[row].length; column++) {
+        if(this.grid[row][column] != player) {
           break;
         }
+
       }
-      if(cell === this.grid[row].length) {
+
+      if(column === this.grid[row].length) {
         this.won = true;
         this.playing = false;
+        wonCells = this.gridElements[row];
       }
     }
 
     // Check column
     for (let column = 0; column < 3; column++) {
       let row;
+      cellCache = [];
       for (row = 0; row < 3; row++) {
         if(this.grid[row][column] != player) {
           break;
         }
+        cellCache.push(this.gridElements[row][column]);
       }
       if(row === 3) {
+        wonCells = cellCache;
         this.won = true;
         this.playing = false;
       }
@@ -117,51 +161,76 @@ class Board {
 
 
     // Check #1 diagonal
+    cellCache = [];
     for (let i = 0; i < 3; i++) {
       if(this.grid[i][i] != player) {
         break;
       }
-
+      cellCache.push(this.gridElements[i][i]);
       if(i === 2) {
         this.won = true;
         this.playing = false;
+        wonCells = cellCache;
       }
     }
 
     // Check #2 diagonal
+    cellCache = [];
     for (let i = 0; i < 3; i++) {
       if(this.grid[i][(3-1)-i] != player) {
         break;
       }
-
+      cellCache.push(this.gridElements[i][i]);
       if(i === 2) {
         this.won = true;
         this.playing = false;
+        wonCells = cellCache;
       }
     }
 
-    let dialog = (message) => {
+    let dialog = () => {
       this.boardElement.classList.add('fadeOut');
       setTimeout(() => {
+        this.restart();
         this.boardElement.style.display = 'none';
-        let won                         = document.querySelector('.won');
-        let wonMessage                  = document.querySelector('.won--message');
-
-        wonMessage.innerHTML            = message;
-        won.style.display               = 'block';
-        won.classList.remove('fadeOut');
-        won.classList.add('bounceInUp');
+        this.boardElement.classList.remove('fadeOut');
+        this.buttonModeContainer.style.display = 'block';
+        this.buttonModeContainer.classList.add('fadeIn');
       }, 200);
     };
 
-    if(this.won)                         dialog(`${player} has won.`);
-    if(!this.won && this.moveCount >= 9) dialog(`It's a tie`);
+
+      if(this.won) {
+        for (let i = 0; i < 3; i++) {
+          for (let j = 0; j < 3; j++) {
+            this.gridElements[i][j].style.pointerEvents = 'none';
+          }
+        }
+        for (let i = 0; i < wonCells.length; i++) {
+          wonCells[i].style.animation = 'blinker 600ms linear infinite';
+        }
+        setTimeout(() => {
+          dialog();
+          for (let i = 0; i < wonCells.length; i++) {
+            wonCells[i].style.animation = '';
+          }
+          for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+              this.gridElements[i][j].style.pointerEvents = 'auto';
+            }
+          }
+        }, 1800);
+      }
+
+      if(!this.won && this.moveCount >= 9) dialog();
+
+
 
 
   }
 
   restart () {
-    console.log('calling restart ');
+    console.log('restart');
     this.playing      = true;
     this.won          = false;
     this.moveCount    = 0;
@@ -178,22 +247,12 @@ class Board {
     for (let index = 0; index < gridElements.length; index++) {
       let gridElement = gridElements[index];
 
+      gridElement.innerHTML = '_';
       if(index < 3) this.gridElements[0].push(gridElement);
       if(index < 6 && index > 2) this.gridElements[1].push(gridElement);
       if(index < 9 && index > 5) this.gridElements[2].push(gridElement);
-      gridElement.innerHTML = '_';
       gridElement.addEventListener('click', event => this.movePlayer(event));
     }
-
-
-    setTimeout(() => {
-      this.wonElement.classList.remove('bounceInUp');
-      this.wonElement.classList.add('fadeOut');
-      this.wonElement.style.display = 'none';
-      this.boardElement.style.display = 'block';
-      this.boardElement.classList.remove('fadeOut');
-      this.boardElement.classList.add('fadeIn');
-    }, 200);
   }
 
   fit() {
@@ -208,10 +267,8 @@ class Board {
         row.style.width = `${windowWidth}px`;
         row.style.height = `${windowWidth / 3}px`;
 
-        console.log(row.children);
         for (let j = 0; j < row.children.length; j++) {
             let cell = row.children[j];
-            console.log(cell);
             cell.style.width  = cell.style.height = cell.style.lineHeight = `${windowWidth / 3}px`;
       }
       }

@@ -34,9 +34,8 @@ class AI {
   }
 
   predict(grid, player, opponent) {
-    console.log(grid, player, opponent);
     // #1: WIN
-    console.log('Playing: row');
+
     for (let row = 0; row < 3; row++) {
       let cell;
       let cellIndex = null;
@@ -55,7 +54,6 @@ class AI {
     }
 
     // Check column
-    console.log('Playing: column');
     for (let column = 0; column < 3; column++) {
       let row;
       let cellIndex = null;
@@ -75,7 +73,6 @@ class AI {
 
 
     // #2: BLOCK OPPONENT
-    console.log('Countering player: Checking row');
     for (let row = 0; row < 3; row++) {
       let column;
       let cellCount = 0;
@@ -93,7 +90,6 @@ class AI {
     }
 
     // Check column
-    console.log('Countering player: checking column');
     for (let column = 0; column < 3; column++) {
       let row;
       let cellCount = 0;
@@ -112,10 +108,9 @@ class AI {
 
 
     // #5 Center:
-    console.log('Center');
     if(!grid[1][1]) return {row: 1, column: 1};
 
-    console.log('Opposite corner');
+
     // #6 Opposite corner:
     if(grid[0][0] === opponent && !grid[2][2]) return {row: 2, column: 2};
     if(grid[0][2] === opponent && !grid[2][0]) return {row: 2, column: 0};
@@ -123,14 +118,14 @@ class AI {
     if(grid[2][2] === opponent && !grid[0][0]) return {row: 0, column: 0};
 
 
-    console.log('Empty corner');
+
     // #7 Empty corner:
     if(!grid[0][0]) return {row: 0, column: 0};
     if(!grid[0][2]) return {row: 0, column: 2};
     if(!grid[2][0]) return {row: 2, column: 0};
     if(!grid[2][2]) return {row: 2, column: 2};
 
-    console.log('Empty side');
+
     // #8 Empty side:
     if(!grid[0][1]) return {row: 0, column: 1};
     if(!grid[1][2]) return {row: 1, column: 2};
