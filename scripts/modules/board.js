@@ -93,11 +93,12 @@ class Board {
 
   moveMachine() {
     let coordinates =  this.ai.predict(this.grid, this.turn, this.turn.type === 'x' ? 'o' : 'x');
-    this.grid[coordinates.row][coordinates.column] = this.turn.type;
-    this.gridElements[coordinates.row][coordinates.column].textContent  = this.turn.type;
+    this.grid[coordinates.row][coordinates.column]                     = this.turn.type;
+    this.gridElements[coordinates.row][coordinates.column].textContent = this.turn.type;
+    this.moveCount++;
     this.hasWon();
     this.turn = this.turn.type === this.players.x.type ? this.players.o : this.players.x;
-    this.moveCount++;
+    console.log(this.moveCount);
   }
 
   movePlayer(event) {
@@ -114,7 +115,7 @@ class Board {
           let audio = new Audio('/sounds/select.wav');
           audio.play();
 
-          if(this.mode === 'machine') {
+          if(!this.won && this.mode === 'machine') {
             this.moveMachine();
           }
         }
@@ -124,18 +125,21 @@ class Board {
   hasWon() {
     // Check row
     let player = this.turn.type;
+    console.log(this.grid);
     let wonCells = [];
     let cellCache = [];
+
     for (let row = 0; row < 3; row++) {
       let column;
       for (column = 0; column < this.grid[row].length; column++) {
         if(this.grid[row][column] != player) {
+          cellCache = [];
           break;
         }
-
+        cellCache.push(this.gridElements[row][column]);
       }
 
-      if(column === this.grid[row].length) {
+      if(column === 3) {
         this.won = true;
         this.playing = false;
         wonCells = this.gridElements[row];
@@ -143,9 +147,9 @@ class Board {
     }
 
     // Check column
+    cellCache = [];
     for (let column = 0; column < 3; column++) {
       let row;
-      cellCache = [];
       for (row = 0; row < 3; row++) {
         if(this.grid[row][column] != player) {
           break;
@@ -177,10 +181,10 @@ class Board {
     // Check #2 diagonal
     cellCache = [];
     for (let i = 0; i < 3; i++) {
-      if(this.grid[i][(3-1)-i] != player) {
+      if(this.grid[i][2-i] != player) {
         break;
       }
-      cellCache.push(this.gridElements[i][i]);
+      cellCache.push(this.gridElements[i][2 - i]);
       if(i === 2) {
         this.won = true;
         this.playing = false;
@@ -222,9 +226,25 @@ class Board {
         }, 1800);
       }
 
-      if(!this.won && this.moveCount >= 9) dialog();
-
-
+      if(!this.won && this.moveCount >= 9) {
+        this.boardElement.classList.add('fadeOut');
+        setTimeout(() => {
+          this.boardElement.style.display = 'none';
+          let tieMessage = document.querySelector('.tie-message');
+          tieMessage.classList.remove('fadeOut');
+          tieMessage.style.display = 'block';
+          tieMessage.classList.add('fadeIn');
+          setTimeout(() => {
+            tieMessage.classList.remove('fadeIn');
+            tieMessage.classList.add('fadeOut');
+            setTimeout(() => {
+                tieMessage.style.display = 'none';
+                dialog();
+              }, 200);
+            }, 1500);
+        }, 200);
+      }
+      console.log(this.moveCount);
 
 
   }

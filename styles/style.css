@@ -137,6 +137,7 @@ body {
   text-align: center;
   margin-top: 35vh;
   transition: all 200ms ease-in-out;
+  animation-duration: 200ms;
 }
 
 .form .form--title {
@@ -163,9 +164,11 @@ body {
   }
 
 
-.first-select {
+.first-select, .tie-message {
   display: none;
 }
+
+
 
 @keyframes blinker {
   50% { opacity: 0.5; }
