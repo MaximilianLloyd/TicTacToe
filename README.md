@@ -10,6 +10,12 @@ $ bower install
 $ gulp serve
 ```
 
+## Todo list
+This is a really small project, but there are still a few things I want to fix. They are listed below:
+- [ ] follow the DRY principle more strictly
+- [ ] Design a new logo
+
+
 ## Contribution
 If you feel that you have something of value to add to the project, then feel free to make a pull request!
 
