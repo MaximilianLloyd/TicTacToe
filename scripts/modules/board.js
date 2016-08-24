@@ -1,4 +1,4 @@
-const Ai = require('./ai'),
+const Ai       = require('./ai'),
       autoBind = require('auto-bind');
 
 class Board {
