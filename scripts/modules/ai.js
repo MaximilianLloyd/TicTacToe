@@ -48,7 +48,7 @@ class AI {
           if(!grid[row][cell]) cellIndex = cell;
         }
       }
-      if(cellCount === 2 && cellIndex) {
+      if(cellCount === 2 && cellIndex !== null) {
         return {row: row, column: cellIndex};
       }
     }
@@ -66,7 +66,7 @@ class AI {
           if(!grid[row][column]) cellIndex = row;
         }
       }
-      if(cellCount === 2 && cellIndex) {
+      if(cellCount === 2 && cellIndex !== null) {
         return {row: cellIndex, column: column};
       }
     }
@@ -84,7 +84,7 @@ class AI {
           if(!grid[row][column]) cellIndex = column;
         }
       }
-      if(cellCount === 2 && cellIndex) {
+      if(cellCount === 2 && cellIndex !== null) {
         return {row: row, column: cellIndex};
       }
     }
@@ -101,7 +101,7 @@ class AI {
           if(!grid[row][column]) cellIndex = row;
         }
       }
-      if(cellCount === 2 && cellIndex) {
+      if(cellCount === 2 && cellIndex !== null) {
         return {row: cellIndex, column: column};
       }
     }

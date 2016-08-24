@@ -147,11 +147,12 @@ class Board {
     }
 
     // Check column
-    cellCache = [];
     for (let column = 0; column < 3; column++) {
       let row;
+      cellCache = [];
       for (row = 0; row < 3; row++) {
         if(this.grid[row][column] != player) {
+          cellCache = [];
           break;
         }
         cellCache.push(this.gridElements[row][column]);
